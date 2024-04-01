@@ -1,0 +1,122 @@
+import java.lang.Math;//importamos la clase Math para poder usar potencias.
+
+public class OrdenMatriz{
+
+	//Atributos
+	
+	int w, h, Lx, Ly, nx, ny;
+	int x0 = 0,xf = 0,y0 = 0,yf = 0; //variables que restringen el desplazamiento (x o y) inicial y final
+	int dx, dy; 
+	//L: longitud total (altura o ancho) que encierra a los elementos
+	//n: numero de elementos en x o y.
+
+		OrdenMatriz(int ancho, int alto, int longitudHorizontal, int longitudVertical, int nElementosX, int nElementosY){ //Constructor de la clase
+
+			Lx = longitudHorizontal;
+			Ly = longitudVertical;
+			nx = nElementosX;
+			ny = nElementosY;
+			w = ancho;
+			h = alto;
+
+		//dada la ecuacion para el acomodo de ventanas L = n + x(n + 1)
+		//donde 
+		//n: numero de ventanas; x: espacio entre ventanas; L: longitud de pantalla; w: ancho de ventana.
+		//L es una cantidad constante y n es el numero requerido para las ventanas.
+		//La solucion del problema sera crear una matriz de 3x3 y mostrar solo los
+		//elementos de las esquinas de la matriz y el central: (1,1) (3,1) (2,2) (3,1) y (3,3
+
+			//calculo de distancia de separacion entre elementos en x cuando no existe
+			//un desplazamiento inicial o final diferente de cero. Se asumira que este siempre es el
+			//caso y se calcula desde el constructor para evitar realizar mas llamadas a metodos.
+			dx = (Lx - w*nx) / ( nx + 1 );
+			dy = (Ly - h*ny) / ( ny + 1 );
+
+		}//fin del constructor de la clase
+
+
+/*****************  Metodos para solicitud de desplazamientos inicial, final y su calculo ************************/
+
+		void setOffset(int desplazamientoInicialX, int desplazamientoFinalX, int desplazamienoInicialY, int desplazamientoFinalY){
+
+			x0 = desplazamientoInicialX;
+			xf = desplazamientoFinalX;
+			y0 = desplazamienoInicialY;
+			yf = desplazamientoFinalY;
+
+			//Calculos en X
+			
+			if(x0 != 0 && xf != 0)
+				dx = (Lx - x0 - xf - nx*w ) / (nx - 1);
+
+			else if( x0 == 0 && xf != 0 )
+				dx = (Lx - xf - nx*w) / (nx);
+
+			else if(xf == 0 && x0 != 0 )
+				dx = (Lx - x0 - nx*w) / (nx);
+
+			//calculos en Y
+
+			if(y0 != 0 && yf != 0)
+				dy = (Ly - y0 - yf - ny*h ) / (ny - 1);
+
+			else if( y0 == 0 && yf != 0 )
+				dy = (Ly - yf - ny*h) / (ny);
+
+			else if(yf == 0 && y0 != 0 )
+				dy = (Ly - y0 - ny*h) / (ny);
+
+		}//fin del metodo setOffset
+
+/*****************  ------------------------------------------------------------- ************************/
+
+		//getters para ancho y alto
+		int getW(){ return w;}
+		int getH(){ return h;}
+
+		//metodo para calculo de posicion de un elemento iterado
+		int getPosicionX(int iteradorx){
+
+			//solo nos interesa saber si hay un desplazamiento inicial especificado. No tomamos en cuenta el final porque eso solo nos
+			//ayuda a realizar calculos. En iteracion es importante tener en cuenta el primer elemento. De ahi en mas solo sumar el desplazamiento
+			//inicial
+
+			if(x0 != 0){
+				if(iteradorx == 0)
+					return x0 + w*iteradorx ;
+				else
+					return x0 + (w + dx) * iteradorx;
+			}
+			else
+				return w*iteradorx + dx*(iteradorx + 1);
+
+		}
+		int getPosicionY(int iteradory){
+
+
+			if(y0 != 0){
+				if(iteradory == 0)
+					return y0 + h*iteradory ;
+				else
+					return y0 + (h + dy) * iteradory;
+			}
+			else
+				return h*iteradory + dy*(iteradory + 1);
+
+		}
+
+		//usamos la sobre carga de POO para definir un "default" que nos permita obtener una posicion inicial por defecto
+		int getPosicionX(){
+			return x0 + dx;
+		}
+		int getPosicionY(){
+			return y0 + dy;
+		}
+
+		boolean calculaAdjunto(int iteradori, int iteradorj){ //regresa un valor verdadero para elementos positivos (esquina y centro) y falso para aristas.
+			boolean b;
+			if( Math.pow(-1,iteradori + iteradorj) > 0 ) b = true; else b = false;
+			return b;
+		}
+
+}//fin de clase OrdenMatriz

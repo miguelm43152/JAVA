@@ -1,3 +1,8 @@
+
+
+// USO DE JCOMBOBOX en clase Panel6B linea 179
+
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
